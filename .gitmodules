@@ -1,0 +1,3 @@
+[submodule "vendor/netsmpp/src/Net_SMPP"]
+	path = vendor/netsmpp/src/Net_SMPP
+	url = https://github.com/egi/Net_SMPP.git

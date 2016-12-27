@@ -1,0 +1,22 @@
+{
+    "name": "egi/SmppKernel",
+    "description": "Provides a structured process for SMPP ESME in handling SMS application by making use of the Net SMPP and EventDispatcher component. It follows symfony/http-kernel component and is applicable to complement Symfony for handling Web ESME client.",
+    "license": "MIT",
+    "keywords": ["smpp","kernel"],
+    "authors": [
+        {
+            "name": "Agastiya S. Mohammad",
+            "email": "agastiya@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "egi\\SmppKernel\\": "src"
+        },
+        "classmap": ["vendor/netsmpp"]
+    }
+}
