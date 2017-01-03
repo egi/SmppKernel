@@ -3,7 +3,10 @@
 namespace egi\SmppKernel;
 
 use \Net_SMPP_Command_Deliver_Sm;
+use \Net_SMPP_Command_Deliver_Sm_Resp;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use egi\SmppKernel\Event;
+use egi\SmppKernel\Event\GetResponseEvent;
 
 class SmppKernel implements SmppKernelInterface
 {
@@ -64,33 +67,9 @@ class SmppKernel implements SmppKernelInterface
         return self::$_instance;
     }
 
-    public function handleMo(Net_SMPP_Command_Deliver_Sm $sm) {
+    public function handle(Net_SMPP_Command_Deliver_Sm $sm) {
 
-        $this->dispatcher->addListener(SmppKernelEvents::REQUEST, function(Event $ev) {
-            // TODO: put in queue
-            $result = null;
-            if (false === $result) {
-                $rsm = SmppKernel::respond($ev->getRequest());
-                $rsm->status = NET_SMPP_ESME_RMSGQFUL;
-
-                $ev->setResponse($rsm);
-            }
-        });
-
-        $this->dispatcher->addListener(SmppKernelEvents::REQUEST, function($rsm) {
-            // TODO: start sms transaction
-            $result = null;
-            //$result = $this->container->get('doctrine')->getEntityManager()->getRepository('TmLog')
-            //    ->create($sm);
-            if (false === $result) {
-                $rsm = SmppKernel::respond($ev->getRequest());
-                $rsm->status = NET_SMPP_ESME_RDELIVERYFAILURE;
-                $ev->setResponse($rsm);
-            }
-
-            // FIXME: where should we save tmlogid?
-            //$rsm->message_id = TmlogModel::$last_transaction_id;
-        });
+        $rsm = null;
 
         $event = new GetResponseEvent($this, $sm);
         $this->dispatcher->dispatch(SmppKernelEvents::REQUEST, $event);
@@ -102,25 +81,40 @@ class SmppKernel implements SmppKernelInterface
             }
         }
 
-        // TODO: resolver
-        $controller = array($this, 'alp');
-        $arguments = array(array('reg', 'mukidi'));
-        //$rsm = $this->container->get('router')->dispatch($sm, $this);
+        // TODO: controller resolver
+        $controller = array($this, 'alp_on_pull');
+        //$controller = array($this, 'alp_on_pull_delivered');
+        $event = new Event($this, $controller, $sm);
+        $this->dispatcher->dispatch(SmppKernelEvents::CONTROLLER, $event);
+        $controller = $event->getController();
+
+        // TODO: argument resolver
+        $arguments = array($sm, array('reg', 'mukidi'));
+        $event = new Event($this, $controller, $arguments, $sm);
+        $this->dispatcher->dispatch(SmppKernelEvents::CONTROLLER_ARGUMENTS, $event);
+        $controller = $event->getController();
+        $arguments = $event->getArguments();
+
         $rsm = call_user_func_array($controller, $arguments);
+
+        if (is_bool($rsm)) {
+            $rsm = SmppKernel::response($sm);
+            if ($rsm === false) {
+                $rsm->status = NET_SMPP_ESME_RX_T_APPN;
+            }
+        } elseif (!$rsm instanceof Net_SMPP_Command_Deliver_Sm_Resp) {
+            throw new \Exception('Undefined or invalid response.');
+        }
 
         return $this->filterResponse($rsm, $sm);
     }
 
-    public function alp($iod) {
-        return 'hello world';
-    }
-
-    public function alp_go_xl97799($iod) {
-        $alp = new Go_Xl97799();
-        $result = $alp->on_reg($sm);
-        if (false === $result) {
-            $rsm->status = NET_SMPP_ESME_RX_T_APPN;
-        }
+    public function alp_on_pull($sm, $iod) {
+        $rm = SmppKernel::reply($sm);
+        $rm->set(array(
+            'message_payload' => 'hello world'
+        ));
+        return true;
     }
 
     public function filterResponse($response, $request) {
@@ -131,41 +125,6 @@ class SmppKernel implements SmppKernelInterface
 
     public function finishRequest($request) {
         $this->dispatcher->dispatch(SmppKernelEvents::FINISH_REQUEST);
-    }
-
-    public function handleDr(Net_SMPP_Command_Deliver_Sm $sm) {
-
-        $rsm = SmppKernel::respond($sm);
-
-        // TODO: try to put in queue, or else give 0x14 resp
-        $result = null;
-        if (false === $result) {
-            $rsm->status = NET_SMPP_ESME_RMSGQFUL;
-            return $rsm;
-        }
-
-        if ($sm->message_state & (\NET_SMPP_STATE_ENROUTE | \NET_SMPP_STATE_ACCEPTED | \NET_SMPP_STATE_REJECTED)) {
-            // event: onSubmitSmsc()
-            // TmlogModel::saveServerMessageId($sm->sequence, $sm->receipted_message_id);
-        } elseif ($sm->message_state & (\NET_SMPP_STATE_DELIVERED | \NET_SMPP_STATE_UNDELIVERABLE)) {
-            // event: onDeliverSm() | onSubmitComplete()
-            // TmlogModel::changeMessageStatus($sm->receipted_message_id, $sm->message_state);
-        }
-
-        // if somehow saving to tmlog failed
-        if (false === $result) {
-            $rsm->status = NET_SMPP_ESME_RDELIVERYFAILURE;
-            return $rsm;
-        }
-
-        //$rsm = $this->container->get('router')->dispatch($sm, $this);
-        $alp = new Go_Xl97799();
-        $result = $alp->on_reg_delivered($sm);
-        if (false === $result) {
-            $rsm->status = NET_SMPP_ESME_RX_T_APPN;
-        }
-
-        return $rsm;
     }
 
     public static function handleMt(\Net_SMPP_Command_Submit_Sm $sm) {
