@@ -11,9 +11,11 @@ use egi\SmppKernel\Event\GetResponseEvent;
 class SmppKernel implements SmppKernelInterface
 {
     protected $dispatcher;
+    protected $resolver;
 
-    function __construct(EventDispatcherInterface $dispatcher) {
+    function __construct(EventDispatcherInterface $dispatcher, ControllerResolverInterface $resolver) {
         $this->dispatcher = $dispatcher;
+        $this->resolver = $resolver;
     }
 
     public static function respond(\Net_SMPP_Command $sm)
@@ -82,7 +84,11 @@ class SmppKernel implements SmppKernelInterface
         }
 
         // TODO: controller resolver
-        $controller = array($this, 'alp_on_pull');
+        //$controller = array($this, 'alp_on_pull');
+        if (false === $controller = $this->resolver->getController($sm)) {
+            throw new \Exception();
+        }
+
         //$controller = array($this, 'alp_on_pull_delivered');
         $event = new Event($this, $controller, $sm);
         $this->dispatcher->dispatch(SmppKernelEvents::CONTROLLER, $event);

@@ -57,10 +57,10 @@ class MoListener implements EventSubscriberInterface
                 array('putInQueue', 10),
                 array('startSmsTransaction', 9),
             ),
-            SmppKernelEvents::CONTROLLER => 'genericController',
-            SmppKernelEvents::CONTROLLER_ARGUMENTS => 'genericControllerArguments',
-            SmppKernelEvents::RESPONSE => 'genericResponse',
-            SmppKernelEvents::FINISH_REQUEST => 'sendMt',
+            //SmppKernelEvents::CONTROLLER => 'genericController',
+            //SmppKernelEvents::CONTROLLER_ARGUMENTS => 'genericControllerArguments',
+            //SmppKernelEvents::RESPONSE => 'genericResponse',
+            //SmppKernelEvents::FINISH_REQUEST => 'sendMt',
         );
     }
 }

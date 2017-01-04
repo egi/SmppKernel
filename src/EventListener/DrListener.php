@@ -37,16 +37,7 @@ class DrListener implements EventSubscriberInterface
 
     public function genericController(Event $ev)
     {
-        // FIXME: seharusnya ini di resolver
-        if ($sm->message_state & (\NET_SMPP_STATE_ENROUTE | \NET_SMPP_STATE_ACCEPTED | \NET_SMPP_STATE_REJECTED)) {
-            // event: onSubmitSmsc()
-            // TmlogModel::saveServerMessageId($sm->sequence, $sm->receipted_message_id);
-            $ev->setController('onSubmitSmsc');
-        } elseif ($sm->message_state & (\NET_SMPP_STATE_DELIVERED | \NET_SMPP_STATE_UNDELIVERABLE)) {
-            // event: onDeliverSm() | onSubmitComplete()
-            // TmlogModel::changeMessageStatus($sm->receipted_message_id, $sm->message_state);
-            $ev->setController($ev->getController().'_delivered');
-        }
+
     }
 
     public function genericControllerArguments(Event $ev)
@@ -66,10 +57,10 @@ class DrListener implements EventSubscriberInterface
                 array('putInQueue', 10),
                 array('loadSmsTransaction', 9),
             ),
-            SmppKernelEvents::CONTROLLER => 'genericController',
-            SmppKernelEvents::CONTROLLER_ARGUMENTS => 'genericControllerArguments',
-            SmppKernelEvents::RESPONSE => 'genericResponse',
-            SmppKernelEvents::FINISH_REQUEST => 'sendMt',
+            //SmppKernelEvents::CONTROLLER => 'genericController',
+            //SmppKernelEvents::CONTROLLER_ARGUMENTS => 'genericControllerArguments',
+            //SmppKernelEvents::RESPONSE => 'genericResponse',
+            //SmppKernelEvents::FINISH_REQUEST => 'sendMt',
         );
     }
 }
