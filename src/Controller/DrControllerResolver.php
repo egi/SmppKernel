@@ -28,15 +28,15 @@ class DrControllerResolver implements ControllerResolverInterface
             $postfix = 'undelivered';
         }
 
-        $method_parts = array('on', 'pull', $postfix);
         if (isset($iods[1])) {
-            $method_parts[1] = $iods[1];
+            $method_parts = array('on', $iods[1], $postfix);
             $method = implode('_', $method_parts);
             if (method_exists($controller, $method)) {
                 return array($this->createController($controller), $method);
             }
         }
 
+        $method_parts = array('on', 'pull', $postfix);
         $method = implode('_', $method_parts);
         if (method_exists($controller, $method)) {
             return array($this->createController($controller), $method);
@@ -46,13 +46,13 @@ class DrControllerResolver implements ControllerResolverInterface
             return $controller;
         }
 
-        throw \Exception(sprintf('No controller found for keyword "%s"', $controller));
+        throw new \Exception(sprintf('No controller found for keyword "%s"', $controller));
     }
 
     protected function createController($class)
     {
         if (!class_exists($class)) {
-            throw \Exception(sprintf('Class "%s" not exists.', $class));
+            throw new \Exception(sprintf('Class "%s" not exists.', $class));
         }
         return $this->instantiateController($class);
     }

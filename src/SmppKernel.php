@@ -83,10 +83,9 @@ class SmppKernel implements SmppKernelInterface
             }
         }
 
-        // TODO: controller resolver
         //$controller = array($this, 'alp_on_pull');
         if (false === $controller = $this->resolver->getController($sm)) {
-            throw new \Exception();
+            throw new \Exception('Controller cannot be resolved.');
         }
 
         //$controller = array($this, 'alp_on_pull_delivered');
