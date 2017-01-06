@@ -29,12 +29,9 @@ interface SmppKernelInterface
     const STATE_BOUND_TRX = 4;
 
     /**
+     * MO and DR handling will be differentiated by the event listeners.
+     *
      * @return Net_SMPP_Command_Deliver_Sm_Resp
      **/
-    public function handleMo(Net_SMPP_Command_Deliver_Sm $sm);
-
-    /**
-     * @return Net_SMPP_Command_Deliver_Sm_Resp
-     **/
-    public function handleDr(Net_SMPP_Command_Deliver_Sm $sm);
+    public function handle(Net_SMPP_Command_Deliver_Sm $sm);
 }
