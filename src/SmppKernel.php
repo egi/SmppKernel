@@ -93,8 +93,9 @@ class SmppKernel implements SmppKernelInterface
         $this->dispatcher->dispatch(SmppKernelEvents::CONTROLLER, $event);
         $controller = $event->getController();
 
-        // TODO: argument resolver
-        $arguments = array($sm, array('reg', 'mukidi'));
+        //$arguments = array($sm, array('reg', 'mukidi'));
+        $arguments = $this->resolver->getArguments($sm, $controller);
+
         $event = new Event($this, $controller, $arguments, $sm);
         $this->dispatcher->dispatch(SmppKernelEvents::CONTROLLER_ARGUMENTS, $event);
         $controller = $event->getController();

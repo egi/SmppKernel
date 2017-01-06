@@ -4,7 +4,8 @@
 
 namespace egi\SmppKernel\Controller;
 
-class DrControllerResolver implements ControllerResolverInterface
+class DrControllerResolver 
+    implements ControllerResolverInterface, ArgumentResolverInterface
 {
     /**
      * {@inheritdoc}
@@ -60,5 +61,12 @@ class DrControllerResolver implements ControllerResolverInterface
     protected function instantiateController($class)
     {
         return new $class();
+    }
+
+    public function getArguments(Net_SMPP_Command_Deliver_Sm $sm, $controller)
+    {
+        $arguments = array();
+        $arguments[] = explode(' ', $sm->short_message);
+        return $arguments;
     }
 }
