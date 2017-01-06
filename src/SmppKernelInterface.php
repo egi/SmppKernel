@@ -1,13 +1,13 @@
 <?php
 
-// src/SmppKernelnterface.php
+// src/SmppKernelInterface.php
 
 namespace egi\SmppKernel;
 
 use \Net_SMPP_Command_Deliver_Sm;
 use \Net_SMPP_Command_Deliver_Sm_Resp;
 
-interface SmppKernelnterface
+interface SmppKernelInterface
 {
     const STATE_CLOSED = 0;
     const STATE_OPEN = 1;
