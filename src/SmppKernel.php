@@ -2,11 +2,16 @@
 
 namespace egi\SmppKernel;
 
+use \Net_SMPP_Command;
 use \Net_SMPP_Command_Deliver_Sm;
 use \Net_SMPP_Command_Deliver_Sm_Resp;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+use egi\SmppKernel\Controller\ControllerResolverInterface;
 use egi\SmppKernel\Event;
 use egi\SmppKernel\Event\GetResponseEvent;
+use egi\SmppKernel\SmppKernelEvents;
 
 class SmppKernel implements SmppKernelInterface
 {
@@ -18,7 +23,7 @@ class SmppKernel implements SmppKernelInterface
         $this->resolver = $resolver;
     }
 
-    public static function respond(\Net_SMPP_Command $sm)
+    public static function respond(Net_SMPP_Command $sm)
     {
         $m = \Net_SMPP::PDU($sm->command.'_resp', array(
             'sequence' => $sm->sequence,
