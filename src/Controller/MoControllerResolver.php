@@ -5,6 +5,8 @@
 namespace egi\SmppKernel\Controller;
 
 use \Net_SMPP_Command_Deliver_Sm;
+use egi\SmppKernel\Controller\ControllerResolverInterface;
+use egi\SmppKernel\Controller\ArgumentResolverInterface;
 
 class MoControllerResolver 
     implements ControllerResolverInterface, ArgumentResolverInterface
