@@ -5,8 +5,9 @@
 namespace egi\SmppKernel\Controller;
 
 use \Net_SMPP_Command_Deliver_Sm;
-use egi\SmppKernel\Controller\ControllerResolverInterface;
+
 use egi\SmppKernel\Controller\ArgumentResolverInterface;
+use egi\SmppKernel\Controller\ControllerResolverInterface;
 
 class MoControllerResolver 
     implements ControllerResolverInterface, ArgumentResolverInterface
@@ -35,13 +36,13 @@ class MoControllerResolver
             return $controller;
         }
 
-        throw \Exception(sprintf('No controller found for keyword "%s"', $controller));
+        throw new \Exception(sprintf('No controller found for keyword "%s"', $controller));
     }
 
     protected function createController($class)
     {
         if (!class_exists($class)) {
-            throw \Exception(sprintf('Class "%s" not exists.', $class));
+            throw new \Exception(sprintf('Class "%s" not exists.', $class));
         }
         return $this->instantiateController($class);
     }
