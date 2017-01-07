@@ -4,6 +4,8 @@
 
 namespace egi\SmppKernel\Controller;
 
+use \Net_SMPP_Command_Deliver_Sm;
+
 class DrControllerResolver 
     implements ControllerResolverInterface, ArgumentResolverInterface
 {
