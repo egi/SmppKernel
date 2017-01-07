@@ -7,6 +7,7 @@ use \Net_SMPP_Command_Deliver_Sm;
 use \Net_SMPP_Command_Deliver_Sm_Resp;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\Event;
 
 use egi\SmppKernel\Controller\ControllerResolverInterface;
 use egi\SmppKernel\Event;
