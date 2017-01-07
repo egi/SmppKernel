@@ -3,6 +3,7 @@
 namespace egi\SmppKernel\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use egi\SmppKernel\SmppKernelEvents;
 
 class MoListener implements EventSubscriberInterface
 {

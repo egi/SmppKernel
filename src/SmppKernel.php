@@ -60,6 +60,9 @@ class SmppKernel implements SmppKernelInterface
 
     var $smsc = null;
 
+    /**
+     * @deprecated. kernel definition will reside in each MO/DR front controller
+     **/
     static $_instance;
     public static function bind($smsc) {
         if (is_null(self::$_instance)) {
