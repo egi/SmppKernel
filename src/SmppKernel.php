@@ -10,7 +10,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 use egi\SmppKernel\Controller\ControllerResolverInterface;
-use egi\SmppKernel\Event;
 use egi\SmppKernel\Event\GetResponseEvent;
 use egi\SmppKernel\SmppKernelEvents;
 
