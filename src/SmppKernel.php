@@ -8,6 +8,7 @@ use \Net_SMPP_Command_Deliver_Sm_Resp;
 
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 use egi\SmppKernel\Controller\ControllerResolverInterface;
 use egi\SmppKernel\Controller\DrControllerResolver;
@@ -93,7 +94,7 @@ class SmppKernel implements SmppKernelInterface
     }
 
     static $smsc;
-    public static function bind($smsc, $state, $event) {
+    public static function bind(ContainerAwareInterface $smsc, $state, $event) {
         if (is_null(self::$smsc)) {
             self::$smsc = $smsc;
         }
