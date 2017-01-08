@@ -8,6 +8,7 @@ use \Net_SMPP_Command_Deliver_Sm;
 
 use egi\SmppKernel\Controller\ArgumentResolverInterface;
 use egi\SmppKernel\Controller\ControllerResolverInterface;
+use egi\SmppKernel\SmppKernel;
 
 class MoControllerResolver 
     implements ControllerResolverInterface, ArgumentResolverInterface
