@@ -94,30 +94,10 @@ class SmppKernel implements SmppKernelInterface
     }
 
     static $smsc;
-    public static function bind(ContainerAwareInterface $smsc, $state, $event) {
+    public function bind(ContainerAwareInterface $smsc, $state, $event) {
         if (is_null(self::$smsc)) {
             self::$smsc = $smsc;
         }
-
-        switch($event) {
-        case self::EVENT_MO:
-            $ed = $smsc->container->get('event_dispatcher');
-            $ed->addSubscriber(new MoListener());
-            $ed->addSubscriber(new SendMtListener());
-
-            return new self($ed, new MoControllerResolver());
-            break;
-
-        case self::EVENT_DR:
-            $ed = $smsc->container->get('event_dispatcher');
-            $ed->addSubscriber(new DrListener());
-            $ed->addSubscriber(new SendMtListener());
-
-            return new self($ed, new DrControllerResolver());
-            break;
-        }
-
-        throw new \Exception('Cannot handle unknown event.');
     }
 
     public static function handleMt(\Net_SMPP_Command_Submit_Sm $sm) {
