@@ -100,7 +100,7 @@ class SmppKernel implements SmppKernelInterface
         }
 
         switch($event) {
-        case EVENT_MO:
+        case self::EVENT_MO:
             $ed = $smsc->container->get('event_dispatcher');
             $ed->addSubscriber(new MoListener());
             $ed->addSubscriber(new SendMtListener());
@@ -108,7 +108,7 @@ class SmppKernel implements SmppKernelInterface
             return new self($ed, new MoControllerResolver());
             break;
 
-        case EVENT_DR:
+        case self::EVENT_DR:
             $ed = $smsc->container->get('event_dispatcher');
             $ed->addSubscriber(new DrListener());
             $ed->addSubscriber(new SendMtListener());
