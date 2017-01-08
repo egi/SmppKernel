@@ -50,15 +50,15 @@ class SmppKernel implements SmppKernelInterface
         //$controller = array($this, 'alp_on_pull_delivered');
         $event = new Event($this, $controller, $sm);
         $this->dispatcher->dispatch(SmppKernelEvents::CONTROLLER, $event);
-        $controller = $event->getController();
+        //$controller = $event->getController();
 
         //$arguments = array($sm, array('reg', 'mukidi'));
         $arguments = $this->resolver->getArguments($sm, $controller);
 
         $event = new Event($this, $controller, $arguments, $sm);
         $this->dispatcher->dispatch(SmppKernelEvents::CONTROLLER_ARGUMENTS, $event);
-        $controller = $event->getController();
-        $arguments = $event->getArguments();
+        //$controller = $event->getController();
+        //$arguments = $event->getArguments();
 
         $rsm = call_user_func_array($controller, $arguments);
 
