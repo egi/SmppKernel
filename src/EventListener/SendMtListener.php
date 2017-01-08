@@ -2,7 +2,9 @@
 
 namespace egi\SmppKernel\EventListener;
 
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
 use egi\SmppKernel\SmppKernelEvents;
 
 class SendMtListener implements EventSubscriberInterface
@@ -12,7 +14,8 @@ class SendMtListener implements EventSubscriberInterface
         //$this->container->get('doctrine')->getEntityManager()->getRepository('TmLog')
         //    ->update($sm);
 
-        $rm = self::$_instance->smsc->send($sm);
+        // TODO: flush all $sm
+        //$rm = $_instance->smsc->send($sm);
 
         //$this->container->get('doctrine')->getEntityManager()->getRepository('TmLog')
         //    ->update($rm);
