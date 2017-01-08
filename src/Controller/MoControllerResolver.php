@@ -57,7 +57,7 @@ class MoControllerResolver
     public function getArguments(Net_SMPP_Command_Deliver_Sm $sm, $controller)
     {
         $arguments = array();
-        $arguments[] = explode(' ', $sm->short_message);
+        $arguments[] = $sm;
         $arguments[] = SmppKernel::$smsc;
         return $arguments;
     }
