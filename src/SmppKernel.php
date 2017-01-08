@@ -24,9 +24,8 @@ class SmppKernel implements SmppKernelInterface
     protected $dispatcher;
     protected $resolver;
 
-    function __construct(EventDispatcherInterface $dispatcher, ControllerResolverInterface $resolver) {
+    function __construct(EventDispatcherInterface $dispatcher) {
         $this->dispatcher = $dispatcher;
-        $this->resolver = $resolver;
     }
 
     public function handle(Net_SMPP_Command_Deliver_Sm $sm) {
@@ -94,10 +93,26 @@ class SmppKernel implements SmppKernelInterface
     }
 
     static $smsc;
-    public function bind(ContainerAwareInterface $smsc, $state, $event) {
+    public function bind($smsc, $state, $event) {
         if (is_null(self::$smsc)) {
             self::$smsc = $smsc;
         }
+
+        switch($event) {
+        case self::EVENT_MO:
+            $this->dispatcher->addSubscriber(new MoListener());
+            $this->dispatcher->addSubscriber(new SendMtListener());
+            $this->resolver = new MoControllerResolver();
+            return true;
+
+        case self::EVENT_DR:
+            $this->dispatcher->addSubscriber(new DrListener());
+            $this->dispatcher->addSubscriber(new SendMtListener());
+            $this->resolver = new DrControllerResolver();
+            return true;
+        }
+
+        throw new \Exception('Cannot handle unknown event.');
     }
 
     public static function handleMt(\Net_SMPP_Command_Submit_Sm $sm) {
