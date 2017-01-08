@@ -28,6 +28,10 @@ interface SmppKernelInterface
      **/
     const STATE_BOUND_TRX = 4;
 
+    const EVENT_MO = 1;
+    const EVENT_MT = 2;
+    const EVENT_DR = 4;
+
     /**
      * MO and DR handling will be differentiated by the event listeners.
      *

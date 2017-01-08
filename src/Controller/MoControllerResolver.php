@@ -56,6 +56,7 @@ class MoControllerResolver
     {
         $arguments = array();
         $arguments[] = explode(' ', $sm->short_message);
+        $arguments[] = SmppKernel::$smsc;
         return $arguments;
     }
 }

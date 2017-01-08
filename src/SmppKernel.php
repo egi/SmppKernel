@@ -6,10 +6,15 @@ use \Net_SMPP_Command;
 use \Net_SMPP_Command_Deliver_Sm;
 use \Net_SMPP_Command_Deliver_Sm_Resp;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use egi\SmppKernel\Controller\ControllerResolverInterface;
+use egi\SmppKernel\Controller\DrControllerResolver;
+use egi\SmppKernel\Controller\MoControllerResolver;
+use egi\SmppKernel\EventListener\DrListener;
+use egi\SmppKernel\EventListener\MoListener;
+use egi\SmppKernel\EventListener\SendMtListener;
 use egi\SmppKernel\Event\GetResponseEvent;
 use egi\SmppKernel\SmppKernelEvents;
 
@@ -61,20 +66,6 @@ class SmppKernel implements SmppKernelInterface
             'dest_addr_npi'       => NET_SMPP_NPI_ISDN,
         ));
         return $m;
-    }
-
-    var $smsc = null;
-
-    /**
-     * @deprecated. kernel definition will reside in each MO/DR front controller
-     **/
-    static $_instance;
-    public static function bind($smsc) {
-        if (is_null(self::$_instance)) {
-            self::$_instance = new self();
-        }
-        self::$_instance->smsc = $smsc;
-        return self::$_instance;
     }
 
     public function handle(Net_SMPP_Command_Deliver_Sm $sm) {
@@ -141,11 +132,38 @@ class SmppKernel implements SmppKernelInterface
         $this->dispatcher->dispatch(SmppKernelEvents::FINISH_REQUEST);
     }
 
+    static $smsc;
+    public static function bind($smsc, $state, $event) {
+        if (is_null(self::$smsc)) {
+            self::$smsc = $smsc;
+        }
+
+        switch($event) {
+        case EVENT_MO:
+            $ed = $smsc->container->get('event_dispatcher');
+            $ed->addSubscriber(new MoListener());
+            $ed->addSubscriber(new SendMtListener());
+
+            return new self($ed, new MoControllerResolver());
+            break;
+
+        case EVENT_DR:
+            $ed = $smsc->container->get('event_dispatcher');
+            $ed->addSubscriber(new DrListener());
+            $ed->addSubscriber(new SendMtListener());
+
+            return new self($ed, new DrControllerResolver());
+            break;
+        }
+
+        throw new \Exception('Cannot handle unknown event.');
+    }
+
     public static function handleMt(\Net_SMPP_Command_Submit_Sm $sm) {
         //$this->container->get('doctrine')->getEntityManager()->getRepository('TmLog')
         //    ->update($sm);
 
-        $rm = self::$_instance->smsc->send($sm);
+        $rm = self::$smsc->send($sm);
 
         //$this->container->get('doctrine')->getEntityManager()->getRepository('TmLog')
         //    ->update($rm);
