@@ -2,6 +2,7 @@
 
 namespace egi\SmppKernel;
 
+use \Net_SMPP;
 use \Net_SMPP_Command;
 use \Net_SMPP_Command_Deliver_Sm;
 use \Net_SMPP_Command_Deliver_Sm_Resp;
@@ -63,7 +64,7 @@ class SmppKernel implements SmppKernelInterface
         $rsm = call_user_func_array($controller, $arguments);
 
         if (is_bool($rsm)) {
-            $rsm = SmppKernel::response($sm);
+            $rsm = Net_SMPP::respond($sm);
             if ($rsm === false) {
                 $rsm->status = NET_SMPP_ESME_RX_T_APPN;
             }
@@ -72,14 +73,6 @@ class SmppKernel implements SmppKernelInterface
         }
 
         return $this->filterResponse($rsm, $sm);
-    }
-
-    public function alp_on_pull($sm, $iod) {
-        $rm = SmppKernel::reply($sm);
-        $rm->set(array(
-            'message_payload' => 'hello world'
-        ));
-        return true;
     }
 
     public function filterResponse($response, $request) {
