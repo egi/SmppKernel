@@ -18,7 +18,8 @@ class MoControllerResolver
     public function getController(Net_SMPP_Command_Deliver_Sm $sm)
     {
         $iods = explode(' ', $sm->short_message);
-        $controller = reset($iods);
+        $keyword = strtolower(reset($iods));
+        $controller = 'AppBundle\\SmppController\\'.ucfirst($keyword).'Controller';
 
         if (isset($iods[1])) {
             $method = 'on_'.$iods[1];
@@ -36,13 +37,13 @@ class MoControllerResolver
             return $controller;
         }
 
-        throw new \Exception(sprintf('No controller found for keyword "%s"', $controller));
+        throw new \Exception(sprintf('Cannot find "%s::%s" controller class for keyword "%s"', $controller, $method, $keyword));
     }
 
     protected function createController($class)
     {
         if (!class_exists($class)) {
-            throw new \Exception(sprintf('Class "%s" not exists.', $class));
+            throw new \Exception(sprintf('Class "%s" does not exists.', $class));
         }
         return $this->instantiateController($class);
     }

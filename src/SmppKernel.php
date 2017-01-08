@@ -103,18 +103,19 @@ class SmppKernel implements SmppKernelInterface
             $this->dispatcher->addSubscriber(new MoListener());
             $this->dispatcher->addSubscriber(new SendMtListener());
             $this->resolver = new MoControllerResolver();
-            return true;
+            return $event;
 
         case self::EVENT_DR:
             $this->dispatcher->addSubscriber(new DrListener());
             $this->dispatcher->addSubscriber(new SendMtListener());
             $this->resolver = new DrControllerResolver();
-            return true;
+            return $event;
         }
 
         throw new \Exception('Cannot handle unknown event.');
     }
 
+    // @deprecated. Use $smsc->send() directly instead, as $smsc is passed to SmppController.
     public static function handleMt(\Net_SMPP_Command_Submit_Sm $sm) {
         //$this->container->get('doctrine')->getEntityManager()->getRepository('TmLog')
         //    ->update($sm);
