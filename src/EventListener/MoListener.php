@@ -6,10 +6,11 @@ use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use egi\SmppKernel\SmppKernelEvents;
+use egi\SmppKernel\Event\GetResponseEvent;
 
 class MoListener implements EventSubscriberInterface
 {
-    public function putInQueue(Event $ev)
+    public function putInQueue(GetResponseEvent $ev)
     {
         // TODO: put in queue
         $result = null;
@@ -21,7 +22,7 @@ class MoListener implements EventSubscriberInterface
         }
     }
 
-    public function startSmsTransaction(Event $ev)
+    public function startSmsTransaction(GetResponseEvent $ev)
     {
         // TODO: start sms transaction
         $result = null;
