@@ -1,15 +1,16 @@
 <?php
 
 // src/Event/GetResponseEvent.php
-
 namespace egi\SmppKernel\Event;
+
+use \Net_SMPP_Command_Deliver_Sm_Resp;
 
 class GetResponseEvent extends SmppKernelEvent
 {
-    private $response;
+    protected $response;
 
-    public function setResponse($rsm) {
-        $this->respose = $rsm;
+    public function setResponse(Net_SMPP_Command_Deliver_Sm_Resp $rsm) {
+        $this->response = $rsm;
         $this->stopPropagation();
     }
 

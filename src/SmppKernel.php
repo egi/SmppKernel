@@ -17,6 +17,8 @@ use egi\SmppKernel\Controller\MoControllerResolver;
 use egi\SmppKernel\EventListener\DrListener;
 use egi\SmppKernel\EventListener\MoListener;
 use egi\SmppKernel\EventListener\SendMtListener;
+use egi\SmppKernel\Event\FilterControllerArgumentsEvent;
+use egi\SmppKernel\Event\FilterControllerEvent;
 use egi\SmppKernel\Event\GetResponseEvent;
 use egi\SmppKernel\SmppKernelEvents;
 
@@ -43,23 +45,20 @@ class SmppKernel implements SmppKernelInterface
             }
         }
 
-        //$controller = array($this, 'alp_on_pull');
         if (false === $controller = $this->resolver->getController($sm)) {
             throw new \Exception('Controller cannot be resolved.');
         }
 
-        //$controller = array($this, 'alp_on_pull_delivered');
-        $event = new Event($this, $controller, $sm);
+        $event = new FilterControllerEvent($this, $controller, $sm);
         $this->dispatcher->dispatch(SmppKernelEvents::CONTROLLER, $event);
-        //$controller = $event->getController();
+        $controller = $event->getController();
 
-        //$arguments = array($sm, array('reg', 'mukidi'));
         $arguments = $this->resolver->getArguments($sm, $controller);
 
-        $event = new Event($this, $controller, $arguments, $sm);
+        $event = new FilterControllerArgumentsEvent($this, $controller, $arguments, $sm);
         $this->dispatcher->dispatch(SmppKernelEvents::CONTROLLER_ARGUMENTS, $event);
-        //$controller = $event->getController();
-        //$arguments = $event->getArguments();
+        $controller = $event->getController();
+        $arguments = $event->getArguments();
 
         $rsm = call_user_func_array($controller, $arguments);
 
